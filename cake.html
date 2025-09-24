@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sweet Dimensions | Luxury 3D Animated Cake Boutique</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Playfair Display', 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+        }
+
+        body {
+            overflow-x: hidden;
+            color: #fff;
+            background: #0a0a0a;
+        }
+
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .content-section {
+            min-height: 100vh;
+            padding: 6rem 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        .content-overlay {
+            background: rgba(15, 14, 14, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, #ff9ecb, #ffdae5, #ff9ecb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 5px 15px rgba(255, 158, 203, 0.5);
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: #ffdae5;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #ff9ecb;
+        }
+
+        p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            color: #f8f8f8;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(45deg, #ff6b9d, #ff407b);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.4);
+            margin-top: 1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 107, 157, 0.6);
+        }
+
+        .btn-cart {
+            padding: 0.7rem 1.5rem;
+            background: linear-gradient(45deg, #4CAF50, #2E8B57);
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn-cart:hover {
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.6);
+        }
+
+        .navigation {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-btn {
+            padding: 0.7rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .cart-btn {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cart-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff407b;
+            color: white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .cake-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .cake-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cake-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .cake-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .cake-price {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #ffdae5;
+            margin: 0.5rem 0;
+        }
+
+        .flavor-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .flavor-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .flavor-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .flavor-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #ffdae5;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .cart-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .cart-modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .cart-content {
+            background: rgba(20, 20, 20, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .cart-items {
+            margin: 1.5rem 0;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .cart-total {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 1rem;
+            color: #ffdae5;
+        }
+
+        .close-cart {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .mobile-warning {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 107, 157, 0.9);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .content-overlay {
+                padding: 2rem;
+                margin: 1rem;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            h2 {
+                font-size: 1.8rem;
+            }
+            
+            .navigation {
+                top: 1rem;
+                right: 1rem;
+            }
+            
+            .nav-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .cart-btn {
+                width: 50px;
+                height: 50px;
+                top: 1rem;
+                left: 1rem;
+            }
+            
+            .mobile-warning {
+                display: block;
+            }
+            
+            .cake-gallery, .flavor-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="three-canvas"></canvas>
+    
+    <div class="cart-btn" onclick="toggleCart()">
+        <i class="fas fa-shopping-cart fa-lg"></i>
+        <span class="cart-count" id="cart-count">0</span>
+    </div>
+    
+    <div class="navigation">
+        <button class="nav-btn" onclick="scrollToSection('home')">Home</button>
+        <button class="nav-btn" onclick="scrollToSection('gallery')">Gallery</button>
+        <button class="nav-btn" onclick="scrollToSection('about')">About</button>
+        <button class="nav-btn" onclick="scrollToSection('flavors')">Flavors</button>
+        <button class="nav-btn" onclick="scrollToSection('contact')">Contact</button>
+    </div>
+    
+    <section id="home" class="content-section">
+        <div class="content-overlay">
+            <h1>Sweet Dimensions</h1>
+            <h2>Luxury Artisan Cakes</h2>
+            <p>Welcome to a world where pastry meets art. Our exquisite cakes are crafted with precision, passion, and the finest ingredients to create unforgettable experiences for your special moments.</p>
+            <a href="#gallery" class="btn">Explore Our Cakes</a>
+        </div>
+    </section>
+    
+    <section id="gallery" class="content-section">
+        <div class="content-overlay">
+            <h2>Our Creations</h2>
+            <p>Each cake is a masterpiece, designed to delight both the eyes and the palate. Browse our collection of custom-designed cakes for inspiration.</p>
+            <div class="cake-gallery">
+                <div class="cake-item">
+                    <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1089&q=80" alt="Wedding Cake" class="cake-image">
+                    <h3>Wedding Elegance</h3>
+                    <p>Multi-tiered perfection for your special day</p>
+                    <div class="cake-price">$320</div>
+                    <button class="btn btn-cart" onclick="addToCart('Wedding Elegance', 320, 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1089&q=80')">Add to Cart</button>
+                </div>
+                <div class="cake-item">
+                    <img src="https://images.unsplash.com/photo-1559620192-032c4bc4674e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1129&q=80" alt="Birthday Cake" class="cake-image">
+                    <h3>Birthday Bliss</h3>
+                    <p>Celebratory cakes filled with joy</p>
+                    <div class="cake-price">$85</div>
+                    <button class="btn btn-cart" onclick="addToCart('Birthday Bliss', 85, 'https://images.unsplash.com/photo-1559620192-032c4bc4674e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1129&q=80')">Add to Cart</button>
+                </div>
+                <div class="cake-item">
+                    <img src="https://images.unsplash.com/photo-1562440499-64c9a111f713?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="Chocolate Cake" class="cake-image">
+                    <h3>Chocolate Decadence</h3>
+                    <p>For the true chocolate connoisseur</p>
+                    <div class="cake-price">$75</div>
+                    <button class="btn btn-cart" onclick="addToCart('Chocolate Decadence', 75, 'https://images.unsplash.com/photo-1562440499-64c9a111f713?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80')">Add to Cart</button>
+                </div>
+                <div class="cake-item">
+                    <img src="https://images.unsplash.com/photo-1586788680434-30d8b2f0466e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1171&q=80" alt="Seasonal Cake" class="cake-image">
+                    <h3>Seasonal Specials</h3>
+                    <p>Celebrating flavors of the season</p>
+                    <div class="cake-price">$95</div>
+                    <button class="btn btn-cart" onclick="addToCart('Seasonal Specials', 95, 'https://images.unsplash.com/photo-1586788680434-30d8b2f0466e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1171&q=80')">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="about" class="content-section">
+        <div class="content-overlay">
+            <h2>Our Story</h2>
+            <p>Founded in 2015 by master pastry chef Isabelle Laurent, Sweet Dimensions brings together traditional French techniques with innovative modern design.</p>
+            <p>Each cake is crafted in our boutique kitchen using locally sourced ingredients whenever possible, ensuring both exceptional flavor and sustainability.</p>
+            <p>We believe that a cake should be more than just dessert—it should be a centerpiece that creates lasting memories.</p>
+            <a href="#contact" class="btn">Visit Our Kitchen</a>
+        </div>
+    </section>
+    
+    <section id="flavors" class="content-section">
+        <div class="content-overlay">
+            <h2>Signature Flavors</h2>
+            <p>We create custom flavor profiles to match your preferences, but here are some of our most popular combinations:</p>
+            <div class="flavor-list">
+                <div class="flavor-item">
+                    <img src="https://images.unsplash.com/photo-1623334044303-241021148842?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Vanilla Raspberry Cake" class="flavor-image">
+                    <h3>Vanilla Bean & Raspberry</h3>
+                    <p>Delicate vanilla with tangy raspberry filling</p>
+                    <div class="cake-price">$78</div>
+                    <button class="btn btn-cart" onclick="addToCart('Vanilla Bean & Raspberry', 78, 'https://images.unsplash.com/photo-1623334044303-241021148842?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80')">Add to Cart</button>
+                </div>
+                <div class="flavor-item">
+                    <img src="https://images.unsplash.com/photo-1606313564200-e75d5e30476c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80" alt="Chocolate Caramel Cake" class="flavor-image">
+                    <h3>Dark Chocolate & Salted Caramel</h3>
+                    <p>Rich chocolate with sweet and salty caramel</p>
+                    <div class="cake-price">$82</div>
+                    <button class="btn btn-cart" onclick="addToCart('Dark Chocolate & Salted Caramel', 82, 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80')">Add to Cart</button>
+                </div>
+                <div class="flavor-item">
+                    <img src="https://images.unsplash.com/photo-1627834377411-8da5f4f09de8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1101&q=80" alt="Lemon Blueberry Cake" class="flavor-image">
+                    <h3>Lemon Curd & Blueberry</h3>
+                    <p>Zesty lemon with fresh blueberry compote</p>
+                    <div class="cake-price">$76</div>
+                    <button class="btn btn-cart" onclick="addToCart('Lemon Curd & Blueberry', 76, 'https://images.unsplash.com/photo-1627834377411-8da5f4f09de8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1101&q=80')">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="contact" class="content-section">
+        <div class="content-overlay">
+            <h2>Order Your Cake</h2>
+            <p>Ready to create something extraordinary? Get in touch with us to discuss your custom cake design.</p>
+            <form class="contact-form">
+                <div class="form-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="event">Event Type</label>
+                    <input type="text" id="event" placeholder="Wedding, birthday, etc.">
+                </div>
+                <div class="form-group">
+                    <label for="message">Your Vision</label>
+                    <textarea id="message" rows="4" placeholder="Tell us about your dream cake..."></textarea>
+                </div>
+                <button type="submit" class="btn">Submit Inquiry</button>
+            </form>
+        </div>
+    </section>
+    
+    <div class="cart-modal" id="cart-modal">
+        <div class="cart-content">
+            <button class="close-cart" onclick="toggleCart()">&times;</button>
+            <h2>Your Shopping Cart</h2>
+            <div class="cart-items" id="cart-items">
+                <!-- Cart items will be added here dynamically -->
+                <p id="empty-cart-message">Your cart is empty</p>
+            </div>
+            <div class="cart-total" id="cart-total">Total: $0</div>
+            <button class="btn" onclick="checkout()">Proceed to Checkout</button>
+        </div>
+    </div>
+    
+    <div class="mobile-warning">
+        For the best experience, please view on desktop. Mobile version shows simplified animation.
+    </div>
+
+    <script>
+        // Three.js implementation for 3D background
+        let scene, camera, renderer;
+        let objects = [];
+        let particleSystem;
+        
+        function initThreeJS() {
+            // Setup scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0a0a0a);
+            
+            // Setup camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 5;
+            
+            // Setup renderer
+            const canvas = document.getElementById('three-canvas');
+            renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            
+            // Create floating cake elements
+            createFloatingElements();
+            
+            // Add ambient light
+            const ambientLight = new THREE.AmbientLight(0xfff0f0, 0.5);
+            scene.add(ambientLight);
+            
+            // Add directional light
+            const directionalLight = new THREE.DirectionalLight(0xffdae5, 1);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(directionalLight);
+            
+            // Handle window resize
+            window.addEventListener('resize', onWindowResize);
+            
+            // Start animation
+            animate();
+        }
+        
+        function createFloatingElements() {
+            // Create various cake elements
+            const geometry = new THREE.SphereGeometry(0.3, 32, 32);
+            const materials = [
+                new THREE.MeshPhongMaterial({ color: 0xff9ecb, shininess: 100 }), // Pink
+                new THREE.MeshPhongMaterial({ color: 0xffdae5, shininess: 100 }), // Light Pink
+                new THREE.MeshPhongMaterial({ color: 0xff6b9d, shininess: 100 }), // Dark Pink
+                new THREE.MeshPhongMaterial({ color: 0xa5ffd0, shininess: 100 }), // Mint
+                new THREE.MeshPhongMaterial({ color: 0xffffd1, shininess: 100 }), // Cream
+            ];
+            
+            // Create multiple floating objects
+            for (let i = 0; i < 30; i++) {
+                const material = materials[Math.floor(Math.random() * materials.length)];
+                const object = new THREE.Mesh(geometry, material);
+                
+                // Random position
+                object.position.x = Math.random() * 10 - 5;
+                object.position.y = Math.random() * 10 - 5;
+                object.position.z = Math.random() * 10 - 5;
+                
+                // Random rotation speed
+                object.rotationSpeedX = Math.random() * 0.02 - 0.01;
+                object.rotationSpeedY = Math.random() * 0.02 - 0.01;
+                
+                // Random scale to simulate different elements
+                const scale = Math.random() * 0.8 + 0.5;
+                object.scale.set(scale, scale, scale);
+                
+                scene.add(object);
+                objects.push(object);
+            }
+            
+            // Create particle system (sugar dust)
+            const particleCount = 1000;
+            const particles = new THREE.BufferGeometry();
+            const particlePositions = new Float32Array(particleCount * 3);
+            const particleColors = new Float32Array(particleCount * 3);
+            
+            for (let i = 0; i < particleCount; i++) {
+                const i3 = i * 3;
+                particlePositions[i3] = (Math.random() - 0.5) * 20;
+                particlePositions[i3 + 1] = (Math.random() - 0.5) * 20;
+                particlePositions[i3 + 2] = (Math.random() - 0.5) * 20;
+                
+                particleColors[i3] = Math.random() * 0.5 + 0.5;
+                particleColors[i3 + 1] = Math.random() * 0.5 + 0.5;
+                particleColors[i3 + 2] = Math.random() * 0.5 + 0.5;
+            }
+            
+            particles.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+            particles.setAttribute('color', new THREE.BufferAttribute(particleColors, 3));
+            
+            const particleMaterial = new THREE.PointsMaterial({
+                size: 0.05,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.6
+            });
+            
+            particleSystem = new THREE.Points(particles, particleMaterial);
+            scene.add(particleSystem);
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Animate objects
+            objects.forEach(object => {
+                object.rotation.x += object.rotationSpeedX;
+                object.rotation.y += object.rotationSpeedY;
+                
+                // Gentle floating motion
+                object.position.y += Math.sin(Date.now() * 0.001 + object.position.x) * 0.002;
+            });
+            
+            // Animate particles
+            if (particleSystem) {
+                particleSystem.rotation.y += 0.001;
+            }
+            
+            renderer.render(scene, camera);
+        }
+        
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Shopping cart functionality
+        let cart = [];
+        const cartModal = document.getElementById('cart-modal');
+        const cartItems = document.getElementById('cart-items');
+        const cartTotal = document.getElementById('cart-total');
+        const cartCount = document.getElementById('cart-count');
+        const emptyCartMessage = document.getElementById('empty-cart-message');
+        
+        function addToCart(name, price, image) {
+            // Check if item already exists in cart
+            const existingItem = cart.find(item => item.name === name);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    name,
+                    price,
+                    image,
+                    quantity: 1
+                });
+            }
+            
+            updateCart();
+            
+            // Show confirmation
+            showNotification(`${name} added to cart!`);
+        }
+        
+        function updateCart() {
+            // Update cart count
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            cartCount.textContent = totalItems;
+            
+            // Update cart items display
+            cartItems.innerHTML = '';
+            
+            if (cart.length === 0) {
+                emptyCartMessage.style.display = 'block';
+            } else {
+                emptyCartMessage.style.display = 'none';
+                
+                cart.forEach((item, index) => {
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'cart-item';
+                    cartItem.innerHTML = `
+                        <div style="display: flex; align-items: center;">
+                            <img src="${item.image}" alt="${item.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 10px; margin-right: 15px;">
+                            <div>
+                                <h3>${item.name}</h3>
+                                <p>$${item.price} x ${item.quantity}</p>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <button onclick="changeQuantity(${index}, ${item.quantity - 1})" style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer;">-</button>
+                            <span style="margin: 0 10px;">${item.quantity}</span>
+                            <button onclick="changeQuantity(${index}, ${item.quantity + 1})" style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer;">+</button>
+                            <button onclick="removeFromCart(${index})" style="background: none; border: none; color: #ff407b; margin-left: 15px; cursor: pointer;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    cartItems.appendChild(cartItem);
+                });
+            }
+            
+            // Update total
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            cartTotal.textContent = `Total: $${total}`;
+        }
+        
+        function changeQuantity(index, newQuantity) {
+            if (newQuantity < 1) {
+                removeFromCart(index);
+                return;
+            }
+            
+            cart[index].quantity = newQuantity;
+            updateCart();
+        }
+        
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+        
+        function toggleCart() {
+            cartModal.classList.toggle('active');
+        }
+        
+        function checkout() {
+            if (cart.length === 0) {
+                showNotification('Your cart is empty!');
+                return;
+            }
+            
+            showNotification('Order placed successfully! Thank you for your purchase.');
+            cart = [];
+            updateCart();
+            toggleCart();
+        }
+        
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.position = 'fixed';
+            notification.style.bottom = '20px';
+            notification.style.left = '50%';
+            notification.style.transform = 'translateX(-50%)';
+            notification.style.backgroundColor = '#ff407b';
+            notification.style.color = 'white';
+            notification.style.padding = '10px 20px';
+            notification.style.borderRadius = '50px';
+            notification.style.zIndex = '10000';
+            notification.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.2)';
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 500);
+            }, 3000);
+        }
+        
+        // Initialize Three.js
+        initThreeJS();
+        
+        // Add scroll effect to 3D scene
+        window.addEventListener('scroll', () => {
+            if (camera) {
+                camera.position.z = 5 + window.scrollY * 0.001;
+                camera.position.y = window.scrollY * 0.001;
+            }
+        });
+    </script>
+</body>
+</html>
