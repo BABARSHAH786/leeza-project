@@ -67,7 +67,7 @@ const About: React.FC = () => {
             </div>
             <div className="relative">
               <img
-                src="/public/chatnew.png"
+                src="https://media.licdn.com/dms/image/v2/D5622AQH4iazRWlPDnw/feedshare-shrink_2048_1536/B56ZmAhUtgIAA0-/0/1758797847169?e=1761782400&v=beta&t=6galQdpPJRhsgMLXWbSeSjRoJtvS9jnOQOXDEL5nVQc"
                 alt="Baker at work"
                 className="rounded-xl shadow-lg w-full"
               />
