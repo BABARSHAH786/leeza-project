@@ -1,0 +1,189 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Premium Resin Art Color Palette */
+    --background: 40 20% 98%;
+    --foreground: 240 10% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 15%;
+
+    /* Soft Rose Pink - Primary Brand Color */
+    --primary: 340 75% 75%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 340 75% 65%;
+
+    /* Lavender - Secondary */
+    --secondary: 270 50% 85%;
+    --secondary-foreground: 240 10% 15%;
+    --secondary-hover: 270 50% 75%;
+
+    /* Cream background variations */
+    --muted: 40 20% 95%;
+    --muted-foreground: 240 10% 45%;
+
+    /* Gold Accent */
+    --accent: 45 90% 60%;
+    --accent-foreground: 240 10% 15%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 340 30% 90%;
+    --input: 340 30% 92%;
+    --ring: 340 75% 75%;
+
+    --radius: 1rem;
+
+    /* Custom gradient definitions */
+    --gradient-primary: linear-gradient(135deg, hsl(340 75% 75%), hsl(270 50% 85%));
+    --gradient-gold: linear-gradient(135deg, hsl(45 90% 70%), hsl(40 85% 60%));
+    --gradient-soft: linear-gradient(180deg, hsl(40 20% 98%), hsl(340 30% 96%));
+    
+    /* Glass-morphism */
+    --glass-bg: hsla(0, 0%, 100%, 0.7);
+    --glass-border: hsla(340, 75%, 75%, 0.2);
+    
+    /* Shadows */
+    --shadow-soft: 0 4px 20px hsla(340, 75%, 75%, 0.15);
+    --shadow-medium: 0 8px 30px hsla(340, 75%, 75%, 0.2);
+    --shadow-large: 0 12px 40px hsla(340, 75%, 75%, 0.25);
+    
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 240 10% 10%;
+    --foreground: 40 20% 95%;
+
+    --card: 240 10% 12%;
+    --card-foreground: 40 20% 95%;
+
+    --popover: 240 10% 12%;
+    --popover-foreground: 40 20% 95%;
+
+    --primary: 340 75% 65%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 340 75% 55%;
+
+    --secondary: 270 50% 75%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-hover: 270 50% 65%;
+
+    --muted: 240 10% 15%;
+    --muted-foreground: 240 10% 60%;
+
+    --accent: 45 90% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 10% 20%;
+    --input: 240 10% 18%;
+    --ring: 340 75% 65%;
+    
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 340 75% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 340 75% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body;
+    font-feature-settings: "kern" 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+
+  .font-accent {
+    font-family: 'Dancing Script', cursive;
+  }
+}
+
+@layer utilities {
+  /* Glass-morphism effect */
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+  }
+
+  /* Gradient backgrounds */
+  .bg-gradient-primary {
+    background: var(--gradient-primary);
+  }
+
+  .bg-gradient-gold {
+    background: var(--gradient-gold);
+  }
+
+  .bg-gradient-soft {
+    background: var(--gradient-soft);
+  }
+
+  /* Smooth transitions */
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+
+  .transition-bounce {
+    transition: var(--transition-bounce);
+  }
+
+  /* Hover effects */
+  .hover-lift {
+    @apply transition-smooth hover:-translate-y-1 hover:shadow-lg;
+  }
+
+  .hover-glow {
+    @apply transition-smooth;
+  }
+
+  .hover-glow:hover {
+    box-shadow: var(--shadow-large);
+  }
+}
