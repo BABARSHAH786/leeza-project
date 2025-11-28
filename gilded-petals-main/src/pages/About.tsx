@@ -133,8 +133,8 @@ const About = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
             {[
-              { number: "500+", label: "Happy Customers" },
-              { number: "1000+", label: "Pieces Created" },
+              { number: "50+", label: "Happy Customers" },
+              { number: "100+", label: "Pieces Created" },
               { number: "4.9", label: "Average Rating" },
               { number: "100%", label: "Handmade" },
             ].map((stat, index) => (
